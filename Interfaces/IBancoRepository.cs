@@ -4,6 +4,6 @@ namespace ApiNotificaciones.Interfaces
 {
     public interface IBancoRepository
     {
-        bool InsertarNotificacion(Notificacion notificacion, int estado);
+        bool InsertarNotificacion(Notificacion notificacion, int estado, string? mensaje_error);
     }
 }

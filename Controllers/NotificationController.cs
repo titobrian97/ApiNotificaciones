@@ -51,21 +51,25 @@ namespace ApiNotificaciones.Controllers
 
                         if (response.StatusCode != 200)
                         {
-                            if (response.StatusCode == 500)
+                            if (response.StatusCode == 401)
                             {
-                                response.Result = new ResponseModel(notificacion.id, 8);
-                                _bancorepositorio.InsertarNotificacion(notificacion, 8);
+                                //error con idp token
+                                Console.WriteLine(response.Result);
+                                _bancorepositorio.InsertarNotificacion(notificacion, 9, response.Result.ToString());
+                                response.Result = new ResponseModel(notificacion.id, 9);
                             }
                             else
                             {
-                                response.Result = new ResponseModel(notificacion.id, 1);
-                                _bancorepositorio.InsertarNotificacion(notificacion, 1);
+                                //500 y rodos los demas errores
+                                Console.WriteLine(response.Result);
+                                _bancorepositorio.InsertarNotificacion(notificacion, 8, response.Result.ToString());
+                                response.Result = new ResponseModel(notificacion.id, 8);
                             }
                         }
                         else
                         {
-                            response.Result = new ResponseModel(notificacion.id, 0);
-                            _bancorepositorio.InsertarNotificacion(notificacion, 0);
+                            _bancorepositorio.InsertarNotificacion(notificacion, 1, null);
+                            response.Result = new ResponseModel(notificacion.id, 1);
                         }
                     }
                 }

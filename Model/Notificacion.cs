@@ -1,15 +1,30 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using DotNetEnv;
+using Newtonsoft.Json;
 
 
 namespace ApiNotificaciones.Model
 {
     public class Notificacion
     {
-        public string id
+
+        private string Id;
+
+        public Notificacion()
         {
-            get { return GenerarStringAleatorio(); }
-            //set { id = GenerateRandomId(); }
+            Id = GenerarStringAleatorio();
+        }
+
+        //[JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
+        public string? id
+        {
+            get { return ObtenerValorId(); }
+            //set { id = GenerarStringAleatorio(); }
+        }
+
+        private string ObtenerValorId()
+        {
+            return Id;
         }
 
         [Required(ErrorMessage = "El tipo de mensaje a enviar es obligatorio")]
@@ -40,6 +55,14 @@ namespace ApiNotificaciones.Model
             string resultado = Env.GetString("idbanco") + numeroAleatorio;
 
             return resultado;
+
+            /*Guid random = Guid.NewGuid();
+            string numeroAleatorio = random.ToString("N");
+            string alet = numeroAleatorio.Substring(2);
+
+            // Concatenar el parámetro y el número aleatorio
+            string resultado = Env.GetString("idbanco") + alet;
+            return resultado;*/
         }
     }
 }
