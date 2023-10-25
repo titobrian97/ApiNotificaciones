@@ -47,32 +47,37 @@ namespace ApiNotificaciones.Controllers
                     {
                         //var access_token = JObject.Parse(response.Result.ToString());
                         token = response.Result.ToString();
-                        response = await consumer.GetApiDataAsync(Env.GetString("apicore"), token, notificacion);
+                        //response = consumer.GetApiDataAsync(Env.GetString("apicore"), token, notificacion).GetAwaiter().GetResult();
 
-                        if (response.StatusCode != 200)
+                        Task.Run(() =>
                         {
-                            if (response.StatusCode == 401)
-                            {
-                                //error con idp token
-                                Console.WriteLine(response.Result);
-                                _bancorepositorio.InsertarNotificacion(notificacion, 9, response.Result.ToString());
-                                response.Result = new ResponseModel(notificacion.id, 9);
-                            }
-                            else
-                            {
-                                //500 y rodos los demas errores
-                                Console.WriteLine(response.Result);
-                                _bancorepositorio.InsertarNotificacion(notificacion, 8, response.Result.ToString());
-                                response.Result = new ResponseModel(notificacion.id, 8);
-                            }
+                            response = consumer.GetApiDataAsync(Env.GetString("apicore"), token, notificacion).Result;
+                        });
+                    }
+                    if (response.StatusCode != 200)
+                    {
+                        if (response.StatusCode == 401)
+                        {
+                            //error con idp token
+                            Console.WriteLine(response.Result);
+                            _bancorepositorio.InsertarNotificacion(notificacion, 9, response.Result.ToString());
+                            response.Result = new ResponseModel(notificacion.id, 9);
                         }
                         else
                         {
-                            _bancorepositorio.InsertarNotificacion(notificacion, 1, null);
-                            response.Result = new ResponseModel(notificacion.id, 1);
+                            //500 y rodos los demas errores
+                            Console.WriteLine(response.Result);
+                            _bancorepositorio.InsertarNotificacion(notificacion, 8, response.Result.ToString());
+                            response.Result = new ResponseModel(notificacion.id, 8);
                         }
                     }
+                    else
+                    {
+                        _bancorepositorio.InsertarNotificacion(notificacion, 1, null);
+                        response.Result = new ResponseModel(notificacion.id, 1);
+                    }
                 }
+
                 else
                 {
                     response.StatusCode = 401;
